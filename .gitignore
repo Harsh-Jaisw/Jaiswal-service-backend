@@ -1,0 +1,12 @@
+node_modules
+package-lock.json
+logs/*
+log/*
+*.env
+*.test
+config/development.json
+config/default.json
+config/test.json
+config/production.json
+logs
+log
