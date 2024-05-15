@@ -24,68 +24,11 @@ module.exports = (router) => {
             }).optional().allow(''),
     }), reqValidator, account.login);
 
-    router.post("/sendMail", validator(Joi, {
-        user: Joi.string().required().messages({
-            'string.base': 'Please enter the valid user ',
-            'string.empty': 'user should not be empty',
-            'any.required': 'Please enter the value for user',
-        }),
-        password: Joi.string().required().messages({
-            'string.base': 'Please enter the valid password ',
-            'string.empty': 'password should not be empty',
-            'any.required': 'Please enter the value for password',
-        }),
-        from: Joi.string().required().messages({
-            'string.base': 'Please enter the valid from ',
-            'string.empty': 'from should not be empty',
-            'any.required': 'Please enter the value for from',
-        }),
-        to: Joi.string().required().messages({
-            'string.base': 'Please enter the valid from ',
-            'string.empty': 'from should not be empty',
-            'any.required': 'Please enter the value for from',
-        }),
-        subject: Joi.string().required().messages({
-            'string.base': 'Please enter the valid from ',
-            'string.empty': 'from should not be empty',
-            'any.required': 'Please enter the value for from',
-        }),
-        description: Joi.string().required().messages({
-            'string.base': 'Please enter the valid from ',
-            'string.empty': 'from should not be empty',
-            'any.required': 'Please enter the value for from',
-        }),
-        html: Joi.string().required().messages({
-            'string.base': 'Please enter the valid html ',
-            'string.empty': 'from should not be html',
-            'any.required': 'Please enter the value for html',
-        }),
-    }), reqValidator, account.sendMail);
-
-    router.post("/addVisits", validator(Joi, {
-        company_id: Joi.string().required().messages({
-            'string.base': 'Please enter the valid company_id ',
-            'string.empty': 'company_id should not be empty',
-            'any.required': 'Please enter the value for company_id',
-        }),
-        page_visited: Joi.string().required().messages({
-            'string.base': 'Please enter the valid company_id ',
-            'string.empty': 'company_id should not be empty',
-            'any.required': 'Please enter the value for company_id',
-        }),
-    }), reqValidator, account.addVisits);
-
-    router.post("/sendMailSheerji", validator(Joi, {
-        name: Joi.string().required().messages({
-            'string.base': 'Please enter the valid name ',
-            'string.empty': 'name should not be empty',
-            'any.required': 'Please enter the value for name',
-        }),
-        email: Joi.string().required().messages({
-            'string.base': 'Please enter the valid email ',
-            'string.empty': 'email should not be empty',
-            'any.required': 'Please enter the value for email',
-        }),
-    }), reqValidator, account.sendMailSheerji);
+    router.post("/signUp", validator(Joi, {
+        mobileNumber: Joi.string()
+            .regex(/^[0-9]{10}$/)
+            .required()
+            .messages({ 'string.pattern.base': 'Phone number must be a 10-digit number', }),
+    }), reqValidator, account.signUp);
 
 }
