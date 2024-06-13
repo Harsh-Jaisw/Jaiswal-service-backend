@@ -31,4 +31,30 @@ module.exports = (router) => {
             .messages({ 'string.pattern.base': 'Phone number must be a 10-digit number', }),
     }), reqValidator, account.signUp);
 
+    router.post("/sendOtp", validator(Joi, {
+        email: Joi.string()
+            .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
+            .required()
+            .allow('')
+            .messages({
+                'string.pattern.base': 'email must be a valid email'
+            }),
+    }), reqValidator, account.sendotp);
+
+    router.post("/verifyOtp", validator(Joi, {
+        email: Joi.string()
+            .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
+            .required()
+            .allow('')
+            .messages({
+                'string.pattern.base': 'email must be a valid email'
+            }),
+        otp: Joi.string()
+            .regex(/^[0-9]{6}$/)
+            .required()
+            .messages({
+                'string.pattern.base': 'Otp must be a 6 digit number',
+            }),
+    }), reqValidator, account.verifyOtp);
+
 }

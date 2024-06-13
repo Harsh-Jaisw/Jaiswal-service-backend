@@ -22,5 +22,6 @@ module.exports = Object.freeze({
     PASSWORD_BLANK: "Password field should not be empty",
     OLD_USED_PASSWORD: "Password is already used please enter a new password",
     EMAIL_SUCCESS:"Email Send Successfully.!",
-    ACCOUNT_ALREADY_EXIT:"Your email already register with us,Please login"
+    ACCOUNT_ALREADY_EXIT:"Your email already register with us,Please login",
+    ALREADY_ACTIVE:"Your account is already active"
 })
