@@ -8,6 +8,7 @@ const customError = require('../handler/errorHandler');
 const eventLogger = require('../logger/eventLogger');
 const { constants } = require("fs/promises");
 const logger = require('../logger/index');
+const nodemailer = require("nodemailer");
 
 const common = {
     trimBody: (body) => {
@@ -103,6 +104,23 @@ const common = {
             userId = req.token.userId;
         }
         eventLogger.info(`\n API:${api}, USERID:${userId}, FUNCTION:${functionName}, PARAMETERS:(${JSON.stringify(data)}), QUERY:${sql}`);
+    },
+    sendMail: async (info) => {
+        let transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: "harikrushnamultimedia@gmail.com",
+                pass: "mvdzyawjmysmtbtc",
+            },
+        });
+
+        transporter.sendMail(info, (err) => {
+            if (err) {
+               return err
+            } else {
+                return true
+            }
+        });
     },
 };
 
