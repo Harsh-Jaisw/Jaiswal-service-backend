@@ -6,6 +6,9 @@ const nodemailer = require("nodemailer");
 const moment = require('moment');
 const helper = require('../helpers/common');
 const uuid = require('uuid');
+const jwtConfig = require("config").get("jwtConfig");
+const app = require("config");
+const jwt = require('jsonwebtoken');
 
 const tables = {
     users: "users",
@@ -15,27 +18,59 @@ const account = {
 
     signUp: asyncHandler(async (req, res) => {
         const body = req.body;
-        let Result = await commonServices.readSingleData(req, tables.users, '*', { 'mobileNumber': body.mobileNumber, });
+        let Result = await commonServices.readSingleData(req, tables.users, '*', { 'email': body.email, });
 
-        if (Result.length !== 0) {
-            return resp.cResponse(req, res, resp.FORBIDDEN_ERROR, con.account.ACCOUNT_ALREADY_EXIT);
+        if (Result.length == 0) {
+            return resp.cResponse(req, res, resp.FORBIDDEN_ERROR, con.account.NO_ACCOUNT);
+        }
+        const newPassword = await helper.encryptData(body.password);
+         console.log(newPassword)
+        let updateData = {
+            mobileNumber: body.mobile_number,
+            password:newPassword,
+            firstName: body.first_name,
+            lastName: body.last_name,
         }
 
-        let insertData = {
-            mobileNumber: body.mobileNumber,
-            password: await helper.encryptData(body.password),
-        }
-
-
+        await commonServices.dynamicUpdate(req, tables.users, updateData, { 'email': body.email });
+        return resp.cResponse(req, res, resp.CREATED, con.account.CREATED);
     }),
 
     login: asyncHandler(async (req, res) => {
         const body = req.body;
-        let loginResults = await commonServices.readSingleData(req, tables.users, '*', { 'mobileNumber': body.mobileNumber, });
+        let loginResults = await commonServices.readSingleData(req, tables.users, '*', { 'email': body.email, status: "Active" });
         if (loginResults.length == 0) {
             return resp.cResponse(req, res, resp.FORBIDDEN_ERROR, con.account.NO_ACCOUNT);
         }
-        return resp.cResponse(req, res, resp.SUCCESS, con.account.CREATED, { loginResults })
+
+        if (!body.password) {
+            return resp.cResponse(req, res, resp.FORBIDDEN_ERROR, con.account.PASSWORD_BLANK);
+        }
+
+        const oldPassword = await helper.decryptData(loginResults[0].password);
+        console.log(oldPassword)
+
+        if (body.password !== oldPassword) {
+            return resp.cResponse(req, res, resp.FORBIDDEN_ERROR, con.account.INCORRECT_PASSWORD);
+        }
+
+        const tempData = {
+            userId: loginResults[0].id,
+            firstName: loginResults[0].firstName,
+            lastName: loginResults[0].lastName,
+            email: loginResults[0].email,
+            phoneNumber: loginResults[0].mobileNumber,
+            roleName: loginResults[0].role,
+            
+        }
+
+        let regularToken = await helper.createToken(tempData, jwtConfig.jwtExpirySeconds, "login");
+        let refreshToken = await helper.createToken(tempData, jwtConfig.refreshTokenExpiry, "login");
+
+        return resp.cResponse(req, res, resp.SUCCESS, con.account.LOGIN_SUCCESSFULL, {
+            token: regularToken,
+            refreshToken: refreshToken
+        })
     }),
 
     sendotp: asyncHandler(async (req, res) => {
