@@ -2,13 +2,15 @@
 const fs = require('fs')
 const path = require('path');
 const randomNumber = require('random-number')
-
+const cryptoJs = require('crypto-js');
 const filesys = require('fs').promises;
 const customError = require('../handler/errorHandler');
 const eventLogger = require('../logger/eventLogger');
 const { constants } = require("fs/promises");
 const logger = require('../logger/index');
 const nodemailer = require("nodemailer");
+const jwt = require('jsonwebtoken');
+const jwtConfig = require("config").get("jwtConfig");
 
 const common = {
     trimBody: (body) => {
