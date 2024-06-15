@@ -5,6 +5,7 @@ const Joi = require('joi');
 const validator = require("../middleware/joiValidator");
 const reqValidator = require('../middleware/reqValidator');
 const resp = require('../helpers/response');
+const auth = require('../middleware/auth');
 
 module.exports = (router) => {
 
@@ -87,5 +88,9 @@ module.exports = (router) => {
             }),
         device_token: Joi.string().optional().allow("").allow(null),
     }), reqValidator, account.verifyOtp);
+
+    router.post('/logout', account.logout);
+
+    router.post("/refreshToken", auth,reqValidator,account.refreshToken);
 
 }

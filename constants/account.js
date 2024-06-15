@@ -24,5 +24,6 @@ module.exports = Object.freeze({
     EMAIL_SUCCESS:"Email Send Successfully.!",
     ACCOUNT_ALREADY_EXIT:"Your email already register with us,Please login",
     ALREADY_ACTIVE:"Your account is already active",
-    INVALID_OTP:"Invalid OTP"
+    INVALID_OTP:"Invalid OTP",
+    LOGOUT:"Logout Successfully",
 })
