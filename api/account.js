@@ -24,10 +24,10 @@ const account = {
             return resp.cResponse(req, res, resp.FORBIDDEN_ERROR, con.account.NO_ACCOUNT);
         }
         const newPassword = await helper.encryptData(body.password);
-         console.log(newPassword)
+        console.log(newPassword)
         let updateData = {
             mobileNumber: body.mobile_number,
-            password:newPassword,
+            password: newPassword,
             firstName: body.first_name,
             lastName: body.last_name,
         }
@@ -61,7 +61,6 @@ const account = {
             email: loginResults[0].email,
             phoneNumber: loginResults[0].mobileNumber,
             roleName: loginResults[0].role,
-            
         }
 
         let regularToken = await helper.createToken(tempData, jwtConfig.jwtExpirySeconds, "login");
@@ -74,19 +73,18 @@ const account = {
     }),
 
     sendotp: asyncHandler(async (req, res) => {
-        const body = req.body;
 
+        const body = req.body;
         let loginResults = await commonServices.readSingleData(req, tables.users, '*', { 'email': body.email });
-        console.log(loginResults)
 
         if (loginResults.length > 0) {
             return resp.cResponse(req, res, resp.FORBIDDEN_ERROR, con.account.ACCOUNT_ALREADY_EXIT);
         }
-        console.log("hello")
+
         if ((loginResults.length > 0) && (loginResults[0].status === "Active")) {
             return resp.cResponse(req, res, resp.FORBIDDEN_ERROR, con.account.ALREADY_ACTIVE);
         }
-        console.log('Heyyy')
+
         let NewOtp = await helper.generateOtp()
 
         let insertData = {
@@ -95,8 +93,6 @@ const account = {
             otp: NewOtp,
             status: "Inactive",
         }
-
-        console.log(insertData)
 
         let info = {
             from: '"harikrushnamultimedia@gmail.com"',
@@ -123,23 +119,29 @@ const account = {
                 `,
         };
 
-        await helper.sendMail(info);
+        const mail = await helper.sendMail(info);
+
         let Result = await commonServices.dynamicInsert(req, tables.users, insertData);
-        console.log(Result)
+
         return resp.cResponse(req, res, resp.SUCCESS, con.account.OTP_SENT);
 
     }),
     verifyOtp: asyncHandler(async (req, res) => {
         const body = req.body;
+
         let Result = await commonServices.readSingleData(req, tables.users, '*', { 'email': body.email, 'otp': body.otp, });
+
         if (Result.length == 0) {
             return resp.cResponse(req, res, resp.FORBIDDEN_ERROR, con.account.INVALID_OTP);
         }
+
         let updateData = {
             status: "Active",
             otp: null,
         }
+
         await commonServices.dynamicUpdate(req, tables.users, updateData, { 'email': body.email, 'otp': body.otp, });
+        
         return resp.cResponse(req, res, resp.SUCCESS, con.account.OTP_VERIFIED);
     })
 
