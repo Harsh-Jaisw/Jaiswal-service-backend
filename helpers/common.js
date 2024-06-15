@@ -116,11 +116,11 @@ const common = {
             },
         });
 
-        transporter.sendMail(info, (err) => {
+       transporter.sendMail(info, (err) => {
             if (err) {
                return err
             } else {
-                return true
+                return info
             }
         });
     },
