@@ -54,9 +54,6 @@ const common = {
             is_first_time: userData.is_first_time,
             iat: (new Date().getTime() / 1000)
         };
-        // let date = new Date()/1000;
-        // let date = new Date(Date.now() - 1000 * (60 * 3))/1000 
-        // tempData.iat = date;
         let token = jwt.sign(tempData, jwtConfig.jwtKey, {
             algorithm: jwtConfig.algorithm,
             expiresIn: tokenTime,
