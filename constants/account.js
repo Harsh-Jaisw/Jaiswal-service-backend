@@ -23,5 +23,6 @@ module.exports = Object.freeze({
     OLD_USED_PASSWORD: "Password is already used please enter a new password",
     EMAIL_SUCCESS:"Email Send Successfully.!",
     ACCOUNT_ALREADY_EXIT:"Your email already register with us,Please login",
-    ALREADY_ACTIVE:"Your account is already active"
+    ALREADY_ACTIVE:"Your account is already active",
+    INVALID_OTP:"Invalid OTP"
 })

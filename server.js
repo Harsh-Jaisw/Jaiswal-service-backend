@@ -50,40 +50,42 @@ app.use("/api/v1", (err, req, res, next) => {
 // Determine environment (local or online)
 const isLocal = config.environment === 'local';
 
-if (isLocal) {
-    const httpServer = http.createServer(app);
+// if (isLocal) {
+const httpServer = http.createServer(app);
 
-    httpServer.listen(port, () => {
-        console.log(`Server is running at http://localhost:${port}`);
-    });
-} else {
-    const privateKeyPath = '/etc/letsencrypt/live/api.hdfonline.in/privkey.pem';
-    const certificatePath = '/etc/letsencrypt/live/api.hdfonline.in/cert.pem';
-    const chainPath = '/etc/letsencrypt/live/api.hdfonline.in/chain.pem';
+httpServer.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+});
 
-    // Check if SSL certificate files exist
-    if (!fs.existsSync(privateKeyPath) || !fs.existsSync(certificatePath) || !fs.existsSync(chainPath)) {
-        console.error('SSL certificate files not found. Make sure the paths are correct.');
-        process.exit(1);
-    }
 
-    const privateKey = fs.readFileSync(privateKeyPath, 'utf8');
-    const certificate = fs.readFileSync(certificatePath, 'utf8');
-    const cas = fs.readFileSync(chainPath, 'utf8');
+// } else {
+//     const privateKeyPath = '/etc/letsencrypt/live/api.hdfonline.in/privkey.pem';
+//     const certificatePath = '/etc/letsencrypt/live/api.hdfonline.in/cert.pem';
+//     const chainPath = '/etc/letsencrypt/live/api.hdfonline.in/chain.pem';
 
-    const credentials = { key: privateKey, cert: certificate, ca: cas };
+//     // Check if SSL certificate files exist
+//     if (!fs.existsSync(privateKeyPath) || !fs.existsSync(certificatePath) || !fs.existsSync(chainPath)) {
+//         console.error('SSL certificate files not found. Make sure the paths are correct.');
+//         process.exit(1);
+//     }
 
-    const httpsServer = https.createServer(credentials, app);
+//     const privateKey = fs.readFileSync(privateKeyPath, 'utf8');
+//     const certificate = fs.readFileSync(certificatePath, 'utf8');
+//     const cas = fs.readFileSync(chainPath, 'utf8');
 
-    httpsServer.listen(httpsPort, '0.0.0.0', () => {
-        console.log(`Server is running at https://api.hdfonline.in`);
-    });
+//     const credentials = { key: privateKey, cert: certificate, ca: cas };
 
-    httpsServer.on('error', (error) => {
-        console.error('HTTPS Server Error:', error);
-    });
+//     const httpsServer = https.createServer(credentials, app);
 
-    httpsServer.on('listening', () => {
-        console.log('HTTPS Server is listening on port', httpsServer.address().port);
-    });
-}
+//     httpsServer.listen(httpsPort, '0.0.0.0', () => {
+//         console.log(`Server is running at https://api.hdfonline.in`);
+//     });
+
+//     httpsServer.on('error', (error) => {
+//         console.error('HTTPS Server Error:', error);
+//     });
+
+//     httpsServer.on('listening', () => {
+//         console.log('HTTPS Server is listening on port', httpsServer.address().port);
+//     });
+// }
