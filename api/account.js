@@ -12,6 +12,7 @@ const jwt = require('jsonwebtoken');
 
 const tables = {
     users: "users",
+    ud:"users_devices"
 }
 
 const account = {
@@ -194,12 +195,80 @@ const account = {
         let regularToken = await helper.createToken(tempData, jwtConfig.jwtExpirySeconds, "login");
         let refreshToken = await helper.createToken(tempData, jwtConfig.refreshTokenExpiry, "login");
 
+
+        let checkingDeviceToken = await commonServices.readAllData(req, tables.ud, "*", {
+          "user_id": loginResults[0].id,
+          "users_device_token": body.device_token
+        })
+        if (checkingDeviceToken.length == 0) {
+          if (body.device_token) {
+            await commonServices.dynamicInsert(req, tables.ud, {
+              user_id: loginResults[0].id,
+              users_device_token: body.device_token || null
+            })
+          }
+        }
+
+
         return resp.cResponse(req, res, resp.SUCCESS, con.account.OTP_VERIFIED, {
             token: regularToken,
             refreshToken: refreshToken
         });
 
-    })
+    }),
+
+    logout: async (req, res) => {
+      try {
+    
+        tempData = {
+          userId: "",
+          firstName: "",
+          lastName: "",
+          email: "",
+          phoneNumber: "",
+          roleName: "",
+        }
+        let devices = await commonServices.readAllData(req, tables.ud, "*", {
+          users_device_token: req.body.users_device_token
+        })
+        let deviceId = devices.map(ele => ele.id)
+        if (deviceId.length != 0) {
+          await commonServices.dynamicDeleteMultiple(req, tables.ud, { id: deviceId })
+        }
+        let token = await helper.createToken(tempData, -120, "login");
+        return resp.cResponse(req, res, resp.SUCCESS, con.account.LOGOUT, {
+          token: token,
+          refreshToken: token
+        });
+      } catch (error) {
+        return resp.cResponse(req, res, resp.EXPECTATION_FAILED, error);
+      }
+    },
+
+    refreshToken: async (req, res) => {
+      try {
+        const oldRefreshToken = req.token;
+        //creating Tokens
+        const tempData = {
+          userId: oldRefreshToken.userId,
+          firstName: oldRefreshToken.firstName,
+          lastName: oldRefreshToken.lastName,
+          email: oldRefreshToken.email,
+          phoneNumber: oldRefreshToken.phoneNumber,
+          roleName: oldRefreshToken.roleName,
+        }
+        let token = await helper.createToken(tempData, jwtConfig.jwtExpirySeconds, "login");
+        let refreshToken = await helper.createToken(tempData, jwtConfig.refreshTokenExpiry, "login");
+        return resp.cResponse(req, res, resp.SUCCESS, con.account.TOKEN_UPDATE_SUCCESS, {
+          token: token,
+          refreshToken: refreshToken
+        });
+      } catch (error) {
+        return resp.cResponse(req, res, resp.EXPECTATION_FAILED, error);
+      }
+    },
+
+
 
 }
 
