@@ -75,9 +75,8 @@ const account = {
     sendotp: asyncHandler(async (req, res) => {
 
         const body = req.body;
+
         let loginResults = await commonServices.readSingleData(req, tables.users, '*', { 'email': body.email });
-
-
 
         if ((loginResults.length > 0) && (loginResults[0].status === "Active")) {
 
@@ -161,7 +160,7 @@ const account = {
         return resp.cResponse(req, res, resp.SUCCESS, con.account.OTP_SENT);
 
     }),
-    
+
     verifyOtp: asyncHandler(async (req, res) => {
         
         const body = req.body;
