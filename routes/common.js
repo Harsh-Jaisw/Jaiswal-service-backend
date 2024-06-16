@@ -5,9 +5,10 @@ const Joi = require('joi');
 const validator = require("../middleware/joiValidator");
 const reqValidator = require('../middleware/reqValidator');
 const resp = require('../helpers/response');
+const auth = require("../middleware/auth");
 
 module.exports = (router) => {
 
-    router.get('/getRoles',reqValidator,common.getRoles)
+    router.get('/getRoles', auth, reqValidator, common.getRoles)
 
 }

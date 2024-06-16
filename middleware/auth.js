@@ -4,10 +4,7 @@ const resp = require('../helpers/response');
 const common = require('../helpers/common');
 const eventLogger = require('../logger/eventLogger');
 const con = require('../constants/index');
-// const {
-//     validationResult
-// } = require('express-validator');
-const cs = require('../services/Common');
+const cs = require('../services/common');
 
 module.exports = async function (req, res, next) {
     // check if there is no token
@@ -32,8 +29,8 @@ module.exports = async function (req, res, next) {
         ].join(' '));
         //Validate user
         userInfo = await cs.readSingleData(req, 'users', 'id', {
-            "phone_number": decodedToken.phoneNumber,
-            "user_status": ["added", "active"]
+            "email": decodedToken.email,
+            "status": "Active"
         });
         if (userInfo.length == 0) {
             return resp.cResponse(req, res, resp.UNAUTHORIZED, con.middleware.AUTHORIZATION_DENIED)

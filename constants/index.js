@@ -1,4 +1,4 @@
 
 const account = require('./account');
-
-module.exports = {account}
+const middleware = require('./middleware')
+module.exports = { account, middleware }
