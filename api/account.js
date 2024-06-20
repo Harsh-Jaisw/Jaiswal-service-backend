@@ -36,6 +36,7 @@ const account = {
     await commonServices.dynamicUpdate(req, tables.users, updateData, { 'email': body.email });
     return resp.cResponse(req, res, resp.CREATED, con.account.CREATED);
   }
+
   ),
 
   // login: asyncHandler(async (req, res) => {
