@@ -10,4 +10,8 @@ echo "New changes copied to server !"
 echo "Installing Dependencies..."
 npm install --yes
 
+
+echo "Building the app..."
+npm run dev
+
 echo "Deployment Finished!"
