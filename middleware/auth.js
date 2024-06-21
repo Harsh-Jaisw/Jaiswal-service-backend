@@ -29,8 +29,8 @@ module.exports = async function (req, res, next) {
         ].join(' '));
         //Validate user
         userInfo = await cs.readSingleData(req, 'users', 'id', {
-            "phone_number": decodedToken.phoneNumber,
-            "user_status": ["added", "active"]
+            "email": decodedToken.email,
+            "status": "Active"
         });
         if (userInfo.length == 0) {
             return resp.cResponse(req, res, resp.UNAUTHORIZED, con.middleware.AUTHORIZATION_DENIED)

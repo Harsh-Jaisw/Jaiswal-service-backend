@@ -66,7 +66,6 @@ module.exports = (router) => {
         email: Joi.string()
             .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
             .required()
-            .allow('')
             .messages({
                 'string.pattern.base': 'email must be a valid email'
             }),
@@ -76,7 +75,6 @@ module.exports = (router) => {
         email: Joi.string()
             .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
             .required()
-            .allow('')
             .messages({
                 'string.pattern.base': 'email must be a valid email'
             }),
@@ -91,6 +89,6 @@ module.exports = (router) => {
 
     router.post('/logout', account.logout);
 
-    router.post("/refreshToken", auth,reqValidator,account.refreshToken);
+    router.post("/refreshToken", auth, reqValidator, account.refreshToken);
 
 }
