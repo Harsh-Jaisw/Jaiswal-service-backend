@@ -9,6 +9,8 @@ const auth = require("../middleware/auth");
 
 module.exports = (router) => {
 
-    router.get('/getRoles', auth, reqValidator, common.getRoles)
+    router.get('/getRoles', reqValidator, common.getRoles),
+        router.get('/getCategory', reqValidator, common.getRoles)
+
 
 }

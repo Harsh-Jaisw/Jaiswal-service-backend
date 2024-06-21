@@ -12,14 +12,42 @@ const jwt = require('jsonwebtoken');
 
 const tables = {
     users: "users",
-    mr:"master_roles"
+    mr: "master_roles",
+    mc: 'master_category'
 }
 
 const common = {
     getRoles: asyncHandler(async (req, res) => {
-        let Result = await commonServices.readAllData(req, tables.mr, '*', {});
-        return resp.cResponse(req, res, resp.SUCCESS,con.account.RECORD_SUCCESS, {
-            record:Result
+
+        let result = await commonServices.readAllData(req, tables.mr, '*', {
+            is_active: 'Active'
+        });
+
+        if (result.length > 0) {
+            return resp.cResponse(req, res, resp.SUCCESS, con.common.SUCCESS, {
+                records: result
+            });
+        }
+
+        return resp.cResponse(req, res, resp.SUCCESS, con.common.NO_RECORD, {
+            records: []
+        });
+    }),
+
+    getCategory: asyncHandler(async (req, res) => {
+
+        let result = await commonServices.readAllData(req, tables.mc, '*', {
+            is_active: 'Active'
+        });
+
+        if (result.length > 0) {
+            return resp.cResponse(req, res, resp.SUCCESS, con.common.SUCCESS, {
+                records: result
+            });
+        }
+
+        return resp.cResponse(req, res, resp.SUCCESS, con.common.NO_RECORD, {
+            records: []
         });
     })
 

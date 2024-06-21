@@ -1,4 +1,5 @@
 
+const common = require('./common');
 const account = require('./account');
-const middleware = require('./middleware')
-module.exports = { account, middleware }
+
+module.exports = {account,common}
