@@ -13,8 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set Git merge strategy to rebase
-        run: git config pull.rebase true
       - name: Deploy to Server
         uses: appleboy/ssh-action@v0.1.6  # Replace with the latest version
         with:
@@ -22,8 +20,5 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /home/bhavish/htdocs/www.testing.harshadkajale.online/
-            git pull origin deploy  # Pull the latest changes from the deploy branch
-            chmod +x ./.scripts/deploy.sh
-            ./.scripts/deploy.sh
+          script: "cd /home/bhavish/htdocs/www.testing.harshadkajale.online/Jaiswal-service-backend && chmod +x ./.scripts/deploy.sh
+          ./.scripts/deploy.sh "
