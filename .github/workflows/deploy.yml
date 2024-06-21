@@ -1,6 +1,5 @@
 name: Deploy
 
-# Trigger the workflow on push and pull request events on the deploy branch
 on:
   push:
     branches: ["deploy"]
@@ -21,17 +20,17 @@ jobs:
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            mkdir -p /home/bhavish/htdocs/www.testing.harshadkajale.online/Jaiswal-service-backend/.scripts
+            mkdir -p /home/bhavish/htdocs/www.testing.harshadkajale.online/.scripts
 
       - name: Upload Deployment Script
-        uses: appleboy/scp-action@v0.1.6  # Use the latest version
+        uses: appleboy/scp-action@v0.1.6
         with:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.VPS_USER }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./.scripts/deploy.sh"
-          target: "/home/bhavish/htdocs/www.testing.harshadkajale.online/Jaiswal-service-backend/.scripts/deploy.sh"
+          target: "/home/bhavish/htdocs/www.testing.harshadkajale.online/.scripts/deploy.sh"
 
       - name: List files in .scripts directory for debug
         uses: appleboy/ssh-action@v0.1.6
@@ -41,16 +40,42 @@ jobs:
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            ls -l /home/bhavish/htdocs/www.testing.harshadkajale.online/Jaiswal-service-backend/.scripts
+            ls -l /home/bhavish/htdocs/www.testing.harshadkajale.online/.scripts
 
-      - name: Deploy to Server
-        uses: appleboy/ssh-action@v0.1.6  # Replace with the latest version
+      - name: Check if the deploy.sh script exists
+        uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.VPS_USER }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/bhavish/htdocs/www.testing.harshadkajale.online/Jaiswal-service-backend/Jaiswal-service-backend
-            chmod +x ./.scripts/deploy.sh
-            ./.scripts/deploy.sh
+            if [ ! -f /home/bhavish/htdocs/www.testing.harshadkajale.online/.scripts/deploy.sh ]; then
+              echo "deploy.sh script not found!"
+              exit 1
+            fi
+
+      - name: Install Node.js and npm if not installed
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            if ! command -v npm &> /dev/null; then
+              curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+              sudo apt install -y nodejs
+            fi
+
+      - name: Verify and Deploy to Server
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/bhavish/htdocs/www.testing.harshadkajale.online
+            chmod +x .scripts/deploy.sh
+            .scripts/deploy.sh
