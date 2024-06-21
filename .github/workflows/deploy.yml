@@ -31,6 +31,6 @@ jobs:
 
       - name: Deploy application
         run: |
-          ssh bhavish@195.35.21.208 "cd /home/***/htdocs/www.testing.harshadkajale.online && npm install && pm2 restart js-backend"
+          ssh -v bhavish@195.35.21.208 "cd /home/***/htdocs/www.testing.harshadkajale.online && npm install && pm2 restart js-backend"
         env:
           SSH_AUTH_SOCK: /tmp/ssh_auth_sock
