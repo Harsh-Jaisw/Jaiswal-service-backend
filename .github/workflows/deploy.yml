@@ -22,4 +22,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: "cd /home/bhavish/htdocs/www.testing.harshadkajale.online && chmod +x  ./.scripts/deploy.sh"
+          script: |
+          cd /home/*/htdocs/www.testing.harshadkajale.online
+          chmod +x ./.scripts/deploy.sh
+          ./.scripts/deploy.sh 
