@@ -38,7 +38,7 @@ if [ $? -ne 0 ]; then
 fi
 echo "New changes copied to server!"
 echo "Installing Dependencies..."
-npm install
+npm install --yes
 if [ $? -ne 0 ]; then
   echo "Failed to install npm dependencies."
   exit 1
