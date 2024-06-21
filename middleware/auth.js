@@ -4,10 +4,7 @@ const resp = require('../helpers/response');
 const common = require('../helpers/common');
 const eventLogger = require('../logger/eventLogger');
 const con = require('../constants/index');
-// const {
-//     validationResult
-// } = require('express-validator');
-const cs = require('../services/Common');
+const cs = require('../services/common');
 
 module.exports = async function (req, res, next) {
     // check if there is no token

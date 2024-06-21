@@ -74,112 +74,101 @@ const account = {
   // }),
 
   sendotp: asyncHandler(async (req, res) => {
-
     const body = req.body;
 
-    let loginResults = await commonServices.readSingleData(req, tables.users, '*', { 'email': body.email });
-    
-    if (loginResults[0].email === body.email) {
+    try {
+      // Fetch user data by email (case insensitive)
+      const loginResults = await commonServices.readSingleData(req, tables.users, '*', { 'email': body.email });
 
-      let OTPInfo = {
-        from: '"harikrushnamultimedia@gmail.com"',
-        to: body.email,
-        subject: ` Hello, User : ${body.email},`,
-        text: `Hello,Mr/Mrs : ${body.email}, Thank you. Chooseing with us.`,
-        html: `<body style="font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px;">
-                       <div style="background-color: #ffffff; max-width: 600px; margin: auto; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                         <h1 style="color: #333;">We Are Here to Assist You!</h1>
-                         <p style="color: #555; font-size: 16px;">Your OTP is : ${loginResults[0].otp},</p>
-                       </div>
-                     </body>`,
-      };
-      const mail = await helper.sendMail(OTPInfo);
+      if (loginResults.length > 0 && loginResults[0].email.toLowerCase() === body.email.toLowerCase()) {
+        
+        // Sending OTP email
+        const OTPInfo = {
+          from: '"harikrushnamultimedia@gmail.com"',
+          to: body.email,
+          subject: `Hello, User: ${body.email}`,
+          text: `Hello, Mr/Mrs: ${body.email}, Your OTP is: ${loginResults[0].otp}`,
+          html: `
+                    <body style="font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px;">
+                        <div style="background-color: #ffffff; max-width: 600px; margin: auto; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                            <h1 style="color: #333;">We Are Here to Assist You!</h1>
+                            <p style="color: #555; font-size: 16px;">Your OTP is : ${loginResults[0].otp}</p>
+                        </div>
+                    </body>`,
+        };
+        await helper.sendMail(OTPInfo);
+        return resp.cResponse(req, res, resp.SUCCESS, con.account.OTP_SENT);
+      } else if (loginResults.length > 0 && loginResults[0].status === "Active") {
+        // Case: User found, but email doesn't match or status is Active
+        const newOtp = await helper.generateOtp();
 
-      return resp.cResponse(req, res, resp.SUCCESS, con.account.OTP_SENT)
+        // Update user's OTP and status to Inactive
+        const updateData = {
+          otp: newOtp,
+        };
+        await commonServices.dynamicUpdate(req, tables.users, updateData, { 'email': body.email });
+
+        // Sending login info email with new OTP
+        const loginInfo = {
+          from: '"harikrushnamultimedia@gmail.com"',
+          to: body.email,
+          subject: `Hello, User: ${body.email}`,
+          text: `Hello, Mr/Mrs: ${body.email}, Your new OTP is: ${newOtp}`,
+          html: `
+                    <body style="font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px;">
+                        <div style="background-color: #ffffff; max-width: 600px; margin: auto; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                            <h1 style="color: #333;">We Are Here to Assist You!</h1>
+                            <p style="color: #555; font-size: 16px;">Dear ${newOtp},</p>
+                            <p style="color: #555; font-size: 16px;">Thank you for contacting us.</p>
+                        </div>
+                    </body>`,
+        };
+        await helper.sendMail(loginInfo);
+
+        // Respond with success message
+        return resp.cResponse(req, res, resp.SUCCESS, con.account.OTP_SENT);
+      } else {
+        // Case: User not found, insert new user
+
+        // Generate new OTP
+        const newOtp = await helper.generateOtp();
+
+        // Insert new user with generated OTP and Inactive status
+        const insertData = {
+          uid: uuid.v1(),
+          email: body.email,
+          otp: newOtp,
+          status: "Inactive",
+        };
+        await commonServices.dynamicInsert(req, tables.users, insertData);
+
+        // Sending new user info email with OTP
+        const info = {
+          from: '"harikrushnamultimedia@gmail.com"',
+          to: body.email,
+          subject: `Hello, User: ${body.email}`,
+          text: `Hello, Mr/Mrs: ${body.email}, Your OTP is: ${newOtp}`,
+          html: `
+                    <body style="font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px;">
+                        <div style="background-color: #ffffff; max-width: 600px; margin: auto; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                            <h1 style="color: #333;">We Are Here to Assist You!</h1>
+                            <p style="color: #555; font-size: 16px;">Dear ${newOtp},</p>
+                            <p style="color: #555; font-size: 16px;">Thank you for contacting us.</p>
+                        </div>
+                    </body>`,
+        };
+        await helper.sendMail(info);
+
+        // Respond with success message
+        return resp.cResponse(req, res, resp.SUCCESS, con.account.OTP_SENT);
+      }
+    } catch (error) {
+      console.error("Error in sendotp endpoint:", error);
+      // Handle errors appropriately (e.g., respond with error status)
+      return resp.cResponse(req, res, resp.FORBIDDEN_ERROR, con.account.SOMETHING_WRONG);
     }
-
-    if ((loginResults.length > 0) && (loginResults[0].status === "Active")) {
-
-      let NewOtp = await helper.generateOtp();
-
-      let insertData = {
-        otp: NewOtp,
-        status: "Inactive",
-      };
-
-      let LoginInfo = {
-        from: '"harikrushnamultimedia@gmail.com"',
-        to: body.email,
-        subject: ` Hello, User : ${body.email},`,
-        text: `Hello,Mr/Mrs : ${body.email}, Thank you. Connecting with us.`,
-        html: `
-                     <body style="font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px;">
-                       <div style="background-color: #ffffff; max-width: 600px; margin: auto; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                         <h1 style="color: #333;">We Are Here to Assist You!</h1>
-                         <p style="color: #555; font-size: 16px;">Dear ${NewOtp},</p>
-                         <p style="color: #555; font-size: 16px;">Thank you for contacting with us.</p>
-                         <p style="color: #555; font-size: 16px;">If you have any questions or need assistance, please feel free to contact us:</p>
-                         <p style="color: #555; font-size: 16px;">
-                           <i class="fas fa-phone-alt"></i> Phone: <a href="tel:+919824229989" style="color: #007bff; text-decoration: none;"> +91 9824229989</a>
-                         </p>
-                         <p style="color: #555; font-size: 16px;">
-                           <i class="far fa-envelope"></i> Email: <a href="mailto:harikrushnamultimedia@gmail.com" style="color: #007bff; text-decoration: none;">harikrushnamultimedia@gmail.com</a>
-                         </p>
-                         <p style="color: #555; font-size: 16px;">Website: <a href="https://shreejigraphic.com/" style="color: #007bff; text-decoration: none;">www.shreejigraphic.com</a></p>
-                         <p style="color: #555; font-size: 16px; margin-top: 20px;">Thank you for choosing our platform!</p>
-                       </div>
-                     </body>
-                    `,
-      };
-
-      const mail = await helper.sendMail(LoginInfo);
-
-      let Result = await commonServices.dynamicUpdate(req, tables.users, insertData, { 'email': body.email });
-
-      return resp.cResponse(req, res, resp.SUCCESS, con.account.OTP_SENT);
-    }
-
-    let NewOtp = await helper.generateOtp()
-
-    let insertData = {
-      uid: uuid.v1(),
-      email: body.email,
-      otp: NewOtp,
-      status: "Inactive",
-    }
-
-    let info = {
-      from: '"harikrushnamultimedia@gmail.com"',
-      to: body.email,
-      subject: ` Hello, User : ${body.email},`,
-      text: `Hello,Mr/Mrs : ${body.email}, Thank you. Connecting with us.`,
-      html: `
-                 <body style="font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px;">
-                   <div style="background-color: #ffffff; max-width: 600px; margin: auto; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                     <h1 style="color: #333;">We Are Here to Assist You!</h1>
-                     <p style="color: #555; font-size: 16px;">Dear ${NewOtp},</p>
-                     <p style="color: #555; font-size: 16px;">Thank you for contacting with us.</p>
-                     <p style="color: #555; font-size: 16px;">If you have any questions or need assistance, please feel free to contact us:</p>
-                     <p style="color: #555; font-size: 16px;">
-                       <i class="fas fa-phone-alt"></i> Phone: <a href="tel:+919824229989" style="color: #007bff; text-decoration: none;"> +91 9824229989</a>
-                     </p>
-                     <p style="color: #555; font-size: 16px;">
-                       <i class="far fa-envelope"></i> Email: <a href="mailto:harikrushnamultimedia@gmail.com" style="color: #007bff; text-decoration: none;">harikrushnamultimedia@gmail.com</a>
-                     </p>
-                     <p style="color: #555; font-size: 16px;">Website: <a href="https://shreejigraphic.com/" style="color: #007bff; text-decoration: none;">www.shreejigraphic.com</a></p>
-                     <p style="color: #555; font-size: 16px; margin-top: 20px;">Thank you for choosing our platform!</p>
-                   </div>
-                 </body>
-                `,
-    };
-
-    const mail = await helper.sendMail(info);
-
-    let Result = await commonServices.dynamicInsert(req, tables.users, insertData);
-
-    return resp.cResponse(req, res, resp.SUCCESS, con.account.OTP_SENT);
-
   }),
+
 
   verifyOtp: asyncHandler(async (req, res) => {
 
@@ -227,7 +216,6 @@ const account = {
         })
       }
     }
-
 
     return resp.cResponse(req, res, resp.SUCCESS, con.account.OTP_VERIFIED, {
       token: regularToken,
@@ -289,11 +277,7 @@ const account = {
 
   resendOtp: asyncHandler(async (req, res) => {
     const body = req.body;
-
-
   })
-
-
 
 }
 
