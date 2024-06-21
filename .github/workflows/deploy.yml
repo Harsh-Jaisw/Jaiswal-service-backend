@@ -13,6 +13,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Ensure .scripts directory exists
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            mkdir -p /home/bhavish/htdocs/www.testing.harshadkajale.online/Jaiswal-service-backend/.scripts
+
       - name: Upload Deployment Script
         uses: appleboy/scp-action@v0.1.6  # Use the latest version
         with:
@@ -22,6 +32,16 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./.scripts/deploy.sh"
           target: "/home/bhavish/htdocs/www.testing.harshadkajale.online/Jaiswal-service-backend/.scripts/deploy.sh"
+
+      - name: List files in .scripts directory for debug
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            ls -l /home/bhavish/htdocs/www.testing.harshadkajale.online/Jaiswal-service-backend/.scripts
 
       - name: Deploy to Server
         uses: appleboy/ssh-action@v0.1.6  # Replace with the latest version
@@ -33,4 +53,4 @@ jobs:
           script: |
             cd /home/bhavish/htdocs/www.testing.harshadkajale.online/Jaiswal-service-backend
             chmod +x ./.scripts/deploy.sh
-            ./.scripts/deploy.sh
+            ./scripts/deploy.sh
