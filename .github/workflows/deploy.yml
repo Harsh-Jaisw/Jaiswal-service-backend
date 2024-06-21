@@ -14,39 +14,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Ensure .scripts directory exists
-        run: mkdir -p /home/***/htdocs/www.testing.harshadkajale.online/.scripts
-
-      - name: Upload Deployment Script
-        uses: appleboy/drone-scp@v1
+      - name: Install Node.js
+        uses: actions/setup-node@v2
         with:
-          host: ${{ secrets.VPS_IP }}
-          username: ${{ secrets.VPS_USER }}
-          password: ${{ secrets.VPS_PASSWORD }}
-          target: /home/***/htdocs/www.testing.harshadkajale.online/.scripts/deploy.sh
-          source: ./.scripts/deploy.sh
-
-      - name: Set execute permissions for deploy.sh
-        run: chmod +x .scripts/deploy.sh
-
-      - name: Install Node.js and npm if not installed
-        run: |
-          if ! command -v npm &> /dev/null; then
-            curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-            sudo apt install -y nodejs
-          fi
+          node-version: '18'
 
       - name: Verify Node.js and npm versions
         run: |
           node --version
           npm --version
 
-      - name: Run Deployment Script
-        uses: appleboy/ssh-action@v2
-        with:
-          host: ${{ secrets.VPS_IP }}
-          username: ${{ secrets.VPS_USER }}
-          password: ${{ secrets.VPS_PASSWORD }}
-          script: |
-            cd /home/***/htdocs/www.testing.harshadkajale.online
-            ./.scripts/deploy.sh
+      - name: Install SSH client
+        run: |
+          sudo apt-get update
+          sudo apt-get install openssh-client -y
+
+      - name: Deploy application
+        run: |
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }} "cd /home/***/htdocs/www.testing.harshadkajale.online && npm install && npm start"
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_auth_sock
