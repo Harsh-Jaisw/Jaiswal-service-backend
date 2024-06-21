@@ -50,6 +50,7 @@ jobs:
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            ls -l /home/bhavish/htdocs/www.testing.harshadkajale.online/.scripts
             if [ ! -f /home/bhavish/htdocs/www.testing.harshadkajale.online/.scripts/deploy.sh ]; then
               echo "deploy.sh script not found!"
               exit 1
