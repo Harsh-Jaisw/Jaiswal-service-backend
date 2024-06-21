@@ -12,6 +12,6 @@ npm install --yes
 
 
 echo "Building the app..."
-npm run dev
+pm2 reload js-backend
 
 echo "Deployment Finished!"
