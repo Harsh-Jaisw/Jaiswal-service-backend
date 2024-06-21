@@ -3,6 +3,9 @@
 # Start logging
 echo "Starting deployment script..."
 
+echo "Deployment started ..."
+git pull origin main
+
 # Check if Node.js and npm are installed
 echo "Checking Node.js and npm installation..."
 NODE_PATH=$(which node)
@@ -27,8 +30,7 @@ export PATH=$PATH:$(dirname $NODE_PATH)
 export PATH=$PATH:$(dirname $NPM_PATH)
 
 # Start deployment
-echo "Deployment started ..."
-git pull origin main
+
 if [ $? -ne 0 ]; then
     echo "Failed to pull latest changes from git."
     exit 1
