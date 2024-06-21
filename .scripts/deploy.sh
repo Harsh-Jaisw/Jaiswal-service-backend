@@ -8,7 +8,7 @@ git pull origin main
 echo "New changes copied to server !"
 
 echo "Installing Dependencies..."
-npm install --yes
+npm install
 
 echo "Deployment Finished!"
 
