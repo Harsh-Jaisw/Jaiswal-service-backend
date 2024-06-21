@@ -8,6 +8,7 @@ git pull
 echo "New changes copied to server !"
 
 echo "Installing Dependencies..."
-npm install --S
+npm update
+npm install 
 
 echo "Deployment Finished!"
