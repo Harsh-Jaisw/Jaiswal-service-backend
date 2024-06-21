@@ -51,6 +51,6 @@ jobs:
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/bhavish/htdocs/www.testing.harshadkajale.online/Jaiswal-service-backend
+            cd /home/bhavish/htdocs/www.testing.harshadkajale.online/Jaiswal-service-backend/Jaiswal-service-backend
             chmod +x ./.scripts/deploy.sh
             ./.scripts/deploy.sh
