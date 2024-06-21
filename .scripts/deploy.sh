@@ -1,39 +1,24 @@
-# #!/bin/bash
-# set -e
-
-# echo "Deployment started ..."
-
-# # Pull the latest version of the app
-# git pull origin deploy
-# echo "New changes copied to server !"
-
-
-# echo "Check Node Js."
-# npm -v
-
-# echo "Installing Dependencies..."
-# npm install --yes
-
-
-# echo "Building the app..."
-# pm2 reload js-backend
-
-# echo "Deployment Finished........!"
-
-
 #!/bin/bash
+set -e
 
-echo "Navigating to directory..."
-cd /home/youruser/htdocs/www.testing.harshadkajale.online || exit
+echo "Deployment started ..."
 
-echo "Cleaning the directory..."
-git reset --hard
-git clean -fd
-
-echo "Pulling the latest changes..."
+# Pull the latest version of the app
 git pull origin deploy
+echo "New changes copied to server !"
 
-echo "Restarting the web server..."
+
+echo "Check Node Js."
+npm -v
+
+echo "Installing Dependencies..."
+npm install --yes
+
+
+echo "Building the app..."
 pm2 reload js-backend
 
-echo "Deployment complete!"
+echo "Deployment Finished........!"
+
+
+
