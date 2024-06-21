@@ -1,5 +1,7 @@
 name: Deploy
 
+# Trigger the workflow on push and
+# pull request events on the deploy branch
 on:
   push:
     branches: ["deploy"]
@@ -9,28 +11,14 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install Node.js
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v0.1.6  # Replace with the latest version
         with:
-          node-version: '18'
-
-      - name: Verify Node.js and npm versions
-        run: |
-          node --version
-          npm --version
-
-      - name: Install SSH client
-        run: |
-          sudo apt-get update
-          sudo apt-get install openssh-client -y
-
-      - name: Deploy application
-        run: |
-          ssh -v bhavish@195.35.21.208 "cd /home/***/htdocs/www.testing.harshadkajale.online && npm install && pm2 restart js-backend"
-        env:
-          SSH_AUTH_SOCK: /tmp/ssh_auth_sock
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: "cd /home/bhavish/htdocs/www.testing.harshadkajale.online/Jaiswal-service-backend && chmod +x ./.scripts/deploy.sh
+          ./.scripts/deploy.sh "
