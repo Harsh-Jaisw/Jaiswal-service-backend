@@ -7,6 +7,10 @@ echo "Deployment started ..."
 git pull origin deploy
 echo "New changes copied to server !"
 
+
+echo "Check Node Js."
+npm -v
+
 echo "Installing Dependencies..."
 npm install --yes
 
