@@ -16,26 +16,29 @@
 
 # Start logging
 echo "Starting deployment script..."
-echo "Current PATH: $PATH"
-echo "Node.js version: $(node -v)"
-echo "npm version: $(npm -v)"
 
-# Check if npm is installed
-if ! command -v npm &> /dev/null
+# Install nvm if it's not installed
+if ! command -v nvm &> /dev/null
 then
-    echo "npm could not be found, installing Node.js and npm..."
-    # Install Node.js and npm without sudo
-    curl -fsSL https://deb.nodesource.com/setup_14.x -o nodesource_setup.sh
-    bash nodesource_setup.sh
-    apt-get install -y nodejs
-    if [ $? -ne 0 ]; then
-        echo "Failed to install Node.js and npm."
-        exit 1
-    fi
-    echo "Node.js and npm installed successfully."
+    echo "nvm could not be found, installing nvm..."
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+    export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+    echo "nvm installed successfully."
 else
-    echo "npm is already installed."
+    echo "nvm is already installed."
 fi
+
+# Load nvm
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# Install Node.js and npm using nvm
+echo "Installing Node.js and npm..."
+nvm install 16
+nvm use 16
 
 echo "Deployment started ..."
 git pull origin main
