@@ -4,7 +4,7 @@
 echo "Starting deployment script..."
 
 echo "Deployment started ..."
-git pull origin main
+git pull
 
 # Check if Node.js and npm are installed
 echo "Checking Node.js and npm installation..."
