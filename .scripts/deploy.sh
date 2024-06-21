@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+echo "Environment Variables:"
+env
+
 echo "Deployment started ..."
 
 # Pull the latest version of the app
