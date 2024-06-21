@@ -42,20 +42,6 @@ jobs:
           script: |
             ls -l /home/bhavish/htdocs/www.testing.harshadkajale.online/.scripts
 
-      - name: Check if the deploy.sh script exists
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.VPS_IP }}
-          username: ${{ secrets.VPS_USER }}
-          port: ${{ secrets.PORT }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            ls -l /home/bhavish/htdocs/www.testing.harshadkajale.online/.scripts
-            if [ ! -f /home/bhavish/htdocs/www.testing.harshadkajale.online/.scripts/deploy.sh ]; then
-              echo "deploy.sh script not found!"
-              exit 1
-            fi
-
       - name: Install Node.js and npm if not installed
         uses: appleboy/ssh-action@v0.1.6
         with:
