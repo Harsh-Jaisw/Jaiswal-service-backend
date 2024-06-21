@@ -16,6 +16,9 @@
 
 # Start logging
 echo "Starting deployment script..."
+echo "Current PATH: $PATH"
+echo "Node.js version: $(node -v)"
+echo "npm version: $(npm -v)"
 
 # Check if npm is installed
 if ! command -v npm &> /dev/null
