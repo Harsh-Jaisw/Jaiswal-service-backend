@@ -37,8 +37,8 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 
 # Install Node.js and npm using nvm
 echo "Installing Node.js and npm..."
-nvm install 16
-nvm use 16
+nvm install 20
+nvm use 20
 
 echo "Deployment started ..."
 git pull origin main
