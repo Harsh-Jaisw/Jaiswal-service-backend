@@ -53,4 +53,4 @@ jobs:
           script: |
             cd /home/bhavish/htdocs/www.testing.harshadkajale.online/Jaiswal-service-backend
             chmod +x ./.scripts/deploy.sh
-            ./scripts/deploy.sh
+            ./.scripts/deploy.sh
