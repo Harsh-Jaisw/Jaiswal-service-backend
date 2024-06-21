@@ -1,7 +1,6 @@
 name: Deploy
 
-# Trigger the workflow on push and
-# pull request events on the deploy branch
+# Trigger the workflow on push and pull request events on the deploy branch
 on:
   push:
     branches: ["deploy"]
@@ -13,6 +12,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Upload Deployment Script
+        uses: appleboy/scp-action@v0.1.6  # Use the latest version
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "./.scripts/deploy.sh"
+          target: "/home/bhavish/htdocs/www.testing.harshadkajale.online/Jaiswal-service-backend/.scripts/deploy.sh"
+
       - name: Deploy to Server
         uses: appleboy/ssh-action@v0.1.6  # Replace with the latest version
         with:
