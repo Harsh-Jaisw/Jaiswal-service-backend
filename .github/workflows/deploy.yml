@@ -32,5 +32,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/bhavish/htdocs/www.testing.harshadkajale.online/Jaiswal-service-backend
-            chmod +x /.scripts/deploy.sh
-            /.scripts/deploy.sh
+            chmod +x ./.scripts/deploy.sh
+            ./.scripts/deploy.sh
