@@ -18,7 +18,9 @@ const tables = {
 const common = {
     getRoles: asyncHandler(async (req, res) => {
         let Result = await commonServices.readAllData(req, tables.mr, '*', {});
-        return resp.cResponse(req, res, resp.SUCCESS, Result);
+        return resp.cResponse(req, res, resp.SUCCESS,con.account.RECORD_SUCCESS, {
+            record:Result
+        });
     })
 
 }
