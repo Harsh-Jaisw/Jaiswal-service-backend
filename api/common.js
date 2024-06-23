@@ -18,6 +18,7 @@ const tables = {
 }
 
 const common = {
+    
     getRoles: asyncHandler(async (req, res) => {
 
         let result = await commonServices.readAllData(req, tables.mr, '*', {
