@@ -79,26 +79,33 @@ const account = {
     try {
       // Fetch user data by email (case insensitive)
       const loginResults = await commonServices.readSingleData(req, tables.users, '*', { 'email': body.email });
-
+      console.log(loginResults);
       if (loginResults.length > 0 && loginResults[0].email.toLowerCase() === body.email.toLowerCase()) {
-        
-        // Sending OTP email
+
+        const newOtp = await helper.generateOtp();
+
+
+        const updateData = {
+          otp: newOtp,
+        };
+        await commonServices.dynamicUpdate(req, tables.users, updateData, { 'email': body.email });
         const OTPInfo = {
           from: '"harikrushnamultimedia@gmail.com"',
           to: body.email,
           subject: `Hello, User: ${body.email}`,
-          text: `Hello, Mr/Mrs: ${body.email}, Your OTP is: ${loginResults[0].otp}`,
+          text: `Hello, Mr/Mrs: ${body.email}, Your OTP is: ${newOtp}`,
           html: `
                     <body style="font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px;">
                         <div style="background-color: #ffffff; max-width: 600px; margin: auto; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                             <h1 style="color: #333;">We Are Here to Assist You!</h1>
-                            <p style="color: #555; font-size: 16px;">Your OTP is : ${loginResults[0].otp}</p>
+                            <p style="color: #555; font-size: 16px;">Your OTP is : ${newOtp}</p>
                         </div>
                     </body>`,
         };
         await helper.sendMail(OTPInfo);
         return resp.cResponse(req, res, resp.SUCCESS, con.account.OTP_SENT);
-      } else if (loginResults.length > 0 && loginResults[0].status === "Active") {
+      }
+      else if (loginResults.length > 0 && loginResults[0].status === "Active") {
         // Case: User found, but email doesn't match or status is Active
         const newOtp = await helper.generateOtp();
 
@@ -117,7 +124,7 @@ const account = {
           html: `
                     <body style="font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px;">
                         <div style="background-color: #ffffff; max-width: 600px; margin: auto; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                            <h1 style="color: #333;">We Are Here to Assist You!</h1>
+                            <h1 style="color: #333;">We Are Here to Assist You!!!!</h1>
                             <p style="color: #555; font-size: 16px;">Dear ${newOtp},</p>
                             <p style="color: #555; font-size: 16px;">Thank you for contacting us.</p>
                         </div>
@@ -151,7 +158,7 @@ const account = {
           html: `
                     <body style="font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px;">
                         <div style="background-color: #ffffff; max-width: 600px; margin: auto; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                            <h1 style="color: #333;">We Are Here to Assist You!</h1>
+                            <h1 style="color: #333;">We Are Here to Assist You!!</h1>
                             <p style="color: #555; font-size: 16px;">Dear ${newOtp},</p>
                             <p style="color: #555; font-size: 16px;">Thank you for contacting us.</p>
                         </div>
