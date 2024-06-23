@@ -11,7 +11,7 @@ module.exports = (router) => {
 
     router.get('/getRoles', reqValidator, common.getRoles),
 
-        router.get('/getCategory', reqValidator, common.getRoles),
+        router.get('/getCategory', reqValidator, common.getCategory),
 
         router.post('/getSubCategory', validator(Joi, {
             category_id: Joi.string()
