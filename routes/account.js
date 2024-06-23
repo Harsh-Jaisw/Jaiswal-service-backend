@@ -9,7 +9,8 @@ const auth = require('../middleware/auth');
 
 module.exports = (router) => {
 
-    // router.post("/login", validator(Joi, {
+    // router.post("/login", 
+    //     validator(Joi, {
     //     email: Joi.string()
     //         .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
     //         .required()

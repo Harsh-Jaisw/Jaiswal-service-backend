@@ -10,7 +10,16 @@ const auth = require("../middleware/auth");
 module.exports = (router) => {
 
     router.get('/getRoles', reqValidator, common.getRoles),
-        router.get('/getCategory', reqValidator, common.getRoles)
+
+        router.get('/getCategory', reqValidator, common.getRoles),
+
+        router.post('/getSubCategory', validator(Joi, {
+            category_id: Joi.string()
+                .required()
+                .messages({
+                    'string.pattern.base': '"category_id" is required.'
+                }),
+        }), reqValidator, common.getSubCategory)
 
 
 }
