@@ -10,6 +10,7 @@ const { constants } = require("fs/promises");
 const logger = require('../logger/index');
 const nodemailer = require("nodemailer");
 const jwt = require('jsonwebtoken');
+const config = './config/default.json';
 const jwtConfig = require("config").get("jwtConfig");
 
 const common = {
@@ -113,9 +114,9 @@ const common = {
             },
         });
 
-       transporter.sendMail(info, (err) => {
+        transporter.sendMail(info, (err) => {
             if (err) {
-               return err
+                return err
             } else {
                 return info
             }
