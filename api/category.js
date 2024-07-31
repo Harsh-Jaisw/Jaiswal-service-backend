@@ -19,39 +19,21 @@ const tables = {
 
 const category = {
 
-    // addCategory: asyncHandler(async (req, res) => {
-
-    //     let result = await commonServices.dynamicInsert(req, tables.mc, {
-    //         category_name: req.body.category_name,
-    //         icon: req.body.icon,
-    //     });
-    //     console.log(result)
-    //     if (result) {
-    //         return resp.cResponse(req, res, resp.CREATED, con.common.SUCCESS, {
-    //             inserted_Id: result?.insertId
-    //         });
-    //     }
-
-    //     return resp.cResponse(req, res, resp.BAD_REQUEST, con.common.SOMETHING_WRONG, {
-    //         records: []
-    //     });
-    // })
-
-
     addCategory: asyncHandler(async (req, res) => {
-        // Ensure file processing was successful and thumbnails are available
+        const body = req.body;
         if (req.file && req.file.thumbnails) {
-            const { small, large } = req.file.thumbnails;
+            const { small } = req.file.thumbnails;
 
-            // Save category information including the file paths
+            const existingCategory = await commonServices.readSingleData(req, tables.mc, '*', { 'category_name': body.category_name, });
+
+            if (existingCategory.length > 0) {
+                return resp.cResponse(req, res, resp.BAD_REQUEST, con.common.CATEGORY_EXISTS);
+            }
             let result = await commonServices.dynamicInsert(req, tables.mc, {
                 category_name: req.body.category_name,
                 icon: small,
-                // small_thumbnail: small,
-                // large_thumbnail: large
             });
 
-            console.log(result);
             if (result) {
                 return resp.cResponse(req, res, resp.CREATED, con.common.SUCCESS, {
                     inserted_Id: result?.insertId,
@@ -59,9 +41,7 @@ const category = {
                 });
             }
         } else {
-            return resp.cResponse(req, res, resp.BAD_REQUEST, con.common.SOMETHING_WRONG, {
-                records: []
-            });
+            return resp.cResponse(req, res, resp.BAD_REQUEST, con.common.SOMETHING_WRONG);
         }
     })
 }
