@@ -13,12 +13,25 @@ const uploadWithProcessing = require('../helpers/uploader');
 module.exports = (router) => {
 
     router.post('/addCategory', auth, uploadWithProcessing, validator(Joi, {
+      
+        category_name: Joi.string()
+            .required()
+            .messages({
+                'string.pattern.base': '"category_name" is required.'
+            }),
+
+    }), reqValidator, category.addCategory),
+
+    router.post('/updateCategory', auth, uploadWithProcessing, validator(Joi, {
+        category_id: Joi.string().required().messages({
+            'string.pattern.base': '"category_id" is required.'
+        }),
         category_name: Joi.string()
             .required()
             .messages({
                 'string.pattern.base': '"category_name" is required.'
             })
-    }), reqValidator, category.addCategory)
+    }), reqValidator, category.updateCategory)
 
 
 }
