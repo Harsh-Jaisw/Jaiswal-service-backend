@@ -12,7 +12,8 @@ const jwt = require('jsonwebtoken');
 
 const tables = {
   users: "users",
-  ud: "users_devices"
+  ud: "users_devices",
+  mr: "master_roles",
 }
 
 const account = {
@@ -158,15 +159,15 @@ const account = {
     };
 
     const updateResults = await commonServices.dynamicUpdate(req, tables.users, updateData, { 'email': body.email, 'otp': body.otp, });
-
-
+    const role = await commonServices.readSingleData(req, tables.mr, '*', { 'id': loginResults[0].role });
+    console.log(role)
     const tempData = {
       userId: loginResults[0].id,
       firstName: loginResults[0].firstName,
       lastName: loginResults[0].lastName,
       email: loginResults[0].email,
       phoneNumber: loginResults[0].mobileNumber,
-      roleName: loginResults[0].role,
+      roleName: role[0].name,
     };
 
     let regularToken = await helper.createToken(tempData, jwtConfig.jwtExpirySeconds, "login");
@@ -188,7 +189,8 @@ const account = {
 
     return resp.cResponse(req, res, resp.SUCCESS, con.account.OTP_VERIFIED, {
       token: regularToken,
-      refreshToken: refreshToken
+      refreshToken: refreshToken,
+      role: role[0].name,
     });
 
   }),

@@ -31,7 +31,21 @@ module.exports = (router) => {
             .messages({
                 'string.pattern.base': '"category_name" is required.'
             })
-    }), reqValidator, category.updateCategory)
+    }), reqValidator, category.updateCategory),
+
+    router.post('/updateCategoryStatus', auth, validator(Joi, {
+        category_id: Joi.string().required().messages({
+            'string.base': '"category_id" must be a string.',
+            'string.empty': '"category_id" is required.',
+            'any.required': '"category_id" is required.'
+        }),
+        status: Joi.string().valid('Active', 'Inactive').required().messages({
+            'string.base': '"status" must be a string.',
+            'string.empty': '"status" is required.',
+            'any.only': '"status" must be either "Active" or "Inactive".',
+            'any.required': '"status" is required.'
+        })
+    }), reqValidator, category.updateCategoryStatus);
 
 
 }
