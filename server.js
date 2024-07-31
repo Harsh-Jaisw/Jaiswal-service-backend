@@ -8,6 +8,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
+const path = require('path');
 
 const app = express();
 
@@ -37,6 +38,8 @@ app.disable('x-powered-by');
 app.use(morgan('combined'));
 
 
+// Serve static files from the "public" directory
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Use your routes
 app.use("/api/v1", (err, req, res, next) => {

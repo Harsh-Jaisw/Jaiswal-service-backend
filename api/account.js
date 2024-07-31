@@ -37,54 +37,16 @@ const account = {
     return resp.cResponse(req, res, resp.CREATED, con.account.CREATED);
   }),
 
-  // login: asyncHandler(async (req, res) => {
-  //     const body = req.body;
-  //     let loginResults = await commonServices.readSingleData(req, tables.users, '*', { 'email': body.email, status: "Active" });
-  //     if (loginResults.length == 0) {
-  //         return resp.cResponse(req, res, resp.FORBIDDEN_ERROR, con.account.NO_ACCOUNT);
-  //     }
-
-  //     if (!body.password) {
-  //         return resp.cResponse(req, res, resp.FORBIDDEN_ERROR, con.account.PASSWORD_BLANK);
-  //     }
-
-  //     const oldPassword = await helper.decryptData(loginResults[0].password);
-  //     console.log(oldPassword)
-
-  //     if (body.password !== oldPassword) {
-  //         return resp.cResponse(req, res, resp.FORBIDDEN_ERROR, con.account.INCORRECT_PASSWORD);
-  //     }
-
-  //     const tempData = {
-  //         userId: loginResults[0].id,
-  //         firstName: loginResults[0].firstName,
-  //         lastName: loginResults[0].lastName,
-  //         email: loginResults[0].email,
-  //         phoneNumber: loginResults[0].mobileNumber,
-  //         roleName: loginResults[0].role,
-  //     }
-
-  //     let regularToken = await helper.createToken(tempData, jwtConfig.jwtExpirySeconds, "login");
-  //     let refreshToken = await helper.createToken(tempData, jwtConfig.refreshTokenExpiry, "login");
-
-  //     return resp.cResponse(req, res, resp.SUCCESS, con.account.LOGIN_SUCCESSFULL, {
-  //         token: regularToken,
-  //         refreshToken: refreshToken
-  //     })
-  // }),
-
   sendotp: asyncHandler(async (req, res) => {
     const body = req.body;
 
     try {
-      // Fetch user data by email (case insensitive)
+     
       const loginResults = await commonServices.readSingleData(req, tables.users, '*', { 'email': body.email });
-      console.log(loginResults);
+      
       if (loginResults.length > 0 && loginResults[0].email.toLowerCase() === body.email.toLowerCase()) {
 
         const newOtp = await helper.generateOtp();
-
-
         const updateData = {
           otp: newOtp,
         };
