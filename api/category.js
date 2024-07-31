@@ -75,7 +75,26 @@ const category = {
         } else {
             return resp.cResponse(req, res, resp.BAD_REQUEST, con.common.SOMETHING_WRONG);
         }
-    })
+    }),
+
+    updateCategoryStatus: asyncHandler(async (req, res) => {
+        const body = req.body;
+        const existingCategory = await commonServices.readSingleData(req, tables.mc, '*', { 'id': body.category_id });
+
+        if (existingCategory.length == 0) {
+            return resp.cResponse(req, res, resp.SUCCESS, con.category.CATEGORY_ID_NOT_FOUND);
+        };
+        let result = await commonServices.dynamicUpdate(req, tables.mc, {
+            is_active: req.body.status,
+        }, { id: body.category_id });
+
+        if (result) {
+            return resp.cResponse(req, res, resp.SUCCESS, `Category successfully updated to ${req.body.status}`, {
+                id:body.category_id,
+            });
+        }
+    }),
+
 }
 
 module.exports = category;
