@@ -10,5 +10,5 @@ module.exports = Object.freeze({
     INVALID_TOKEN: 'Invalid token',
     NO_TOKEN: 'No token, authorization failed',
     SUCCESS: 'Records found successfully.',
-    CATEGORY_EXISTS:"Category already exists."
+    CATEGORY_EXISTS: 'Category already exists.',
 })

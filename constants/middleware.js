@@ -6,6 +6,7 @@ module.exports = Object.freeze({
     AUTHORIZATION_DENIED: 'Authorization denied',
     PERMISSION_DENIED: 'Permission denied',
     NOT_PROVIDED_ANY_ROLE: 'You are not provided any role.',
-    AUTHORIZATION_FAILED_NO_PERMISSION: 'Authorization failed, you have not permission',
-    NOT_AUTHORIZED: "You are not authorized"
+    AUTHORIZATION_FAILED_NO_PERMISSION:
+        'Authorization failed, you have not permission',
+    NOT_AUTHORIZED: 'You are not authorized',
 })

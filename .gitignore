@@ -11,4 +11,4 @@ config/production.json
 logs
 log
 public/uploads/category/*
-public/uploads/*
+public/uploads/profile/*
