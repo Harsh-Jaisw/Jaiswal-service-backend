@@ -27,7 +27,7 @@ const category = {
                 req,
                 tables.mc,
                 '*',
-                {service_name: body.service_name}
+                {category_name: body.category_name}
             )
 
             if (existingCategory.length > 0) {
