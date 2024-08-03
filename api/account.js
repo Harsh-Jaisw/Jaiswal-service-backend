@@ -215,7 +215,7 @@ const account = {
             return resp.cResponse(
                 req,
                 res,
-                resp.FORBIDDEN_ERROR,
+                resp.BAD_REQUEST,
                 con.account.INVALID_OTP
             )
         }
@@ -357,6 +357,7 @@ const account = {
                 {
                     token: token,
                     refreshToken: refreshToken,
+                    role: oldRefreshToken.roleName,
                 }
             )
         } catch (error) {
