@@ -66,7 +66,7 @@ module.exports = (router) => {
             faq.updateFaq
         ),
         router.post(
-            '/deleteFaq',
+            '/deleteFaq', auth,
             validator(Joi, {
                 faq_id: Joi.string().required().messages({
                     'string.pattern.base': '"faq_id" is required.',

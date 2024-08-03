@@ -32,4 +32,5 @@ module.exports = Object.freeze({
     LOGOUT: 'Logout Successfully',
     RECORD_FOUND: 'Record found successfully.',
     PROFILE_UPDATED: 'Profile updated successfully.',
+    TOKEN_UPDATE_SUCCESS:"Tokens updated successfully."
 })

@@ -5,7 +5,7 @@ const dbError = require('../handler/errorHandler')
 const eventLogger = require('../logger/eventLogger')
 const commonHelper = require('../helpers/common')
 
-// var {google} = require('googleapis');
+
 
 const commonServices = {
     //Returns single record for query
@@ -562,7 +562,7 @@ const commonServices = {
         req,
         table,
         filters = {},
-        pagination = {page: 1, pageSize: 10},
+        pagination = { page: 1, pageSize: 10 },
         sort = null
     ) => {
         const db = makeDb(config)
@@ -591,14 +591,14 @@ const commonServices = {
 
             // Add sorting if provided
             if (sort && sort.column && sort.direction) {
-                const {column, direction = 'ASC'} = sort
+                const { column, direction = 'ASC' } = sort
                 if (column) {
                     baseSql += ` ORDER BY ${column} ${direction}`
                 }
             }
 
             // Add pagination
-            const {page, pageSize} = pagination
+            const { page, pageSize } = pagination
             const offset = (page - 1) * pageSize
             baseSql += ` LIMIT ? OFFSET ?`
             values.push(pageSize, offset)
@@ -634,7 +634,7 @@ const commonServices = {
         } finally {
             await db.close()
         }
-    },
+    }
 }
 
 module.exports = commonServices
