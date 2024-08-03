@@ -153,12 +153,14 @@ const uploadWithProcessing = (options = {}) => {
                     return res.status(500).json({error: error.message})
                 }
             } else {
-                console.warn('No files uploaded.')
+                // No file uploaded, no need to process or return an error
+                req.fileDetails = {}
             }
 
             next()
         })
     }
 }
+
 
 module.exports = uploadWithProcessing
