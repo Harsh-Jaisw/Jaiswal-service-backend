@@ -96,4 +96,18 @@ module.exports = (router) => {
     reqValidator,
     subcategory.deleteSubCategory,
   );
+
+  router.post(
+    '/getAllSubCategories',
+    validator(Joi, {
+      pageNumber: Joi.number().integer().min(1).default(1),
+      pageSize: Joi.number().integer().min(1).max(100).default(10),
+      category_id: Joi.string().optional().allow(''),
+      search: Joi.string().allow(''),
+      sortBy: Joi.string().valid('service_name', 'service_cost', 'rating', 'est_time'),
+      sortOrder: Joi.string().valid('asc', 'desc'),
+    }),
+    reqValidator,
+    subcategory.getAllSubCategories,
+  );
 };
