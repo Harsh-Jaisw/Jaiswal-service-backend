@@ -9,6 +9,7 @@ const uuid = require('uuid');
 const jwtConfig = require('config').get('jwtConfig');
 const app = require('config');
 const jwt = require('jsonwebtoken');
+const subcategoryservice = require('../services/subcategories');
 
 const tables = {
   users: 'users',
@@ -253,6 +254,17 @@ const subcategory = {
     await commonServices.dynamicDeleteMultiple(req, tables.fsc, { sub_category_id: body.category_id });
 
     return resp.cResponse(req, res, resp.SUCCESS, con.category.SUB_CATEGORY_DELETED);
+  }),
+
+  getAllSubCategories: asyncHandler(async (req, res) => {
+    const { pageNumber, pageSize, category_id, search, sortBy, sortOrder } = req.body;
+
+    const result = await subcategoryservice.getAllSubCategories({ pageNumber, pageSize, category_id, search, sortBy,sortOrder});
+
+    if (result.length == 0) {
+      return resp.cResponse(req, res, resp.SUCCESS, con.category.NO_RECORD);
+    }
+    return resp.cResponse(req, res, resp.SUCCESS, result);
   }),
 };
 
