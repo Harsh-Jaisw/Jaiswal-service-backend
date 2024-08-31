@@ -259,12 +259,12 @@ const subcategory = {
   getAllSubCategories: asyncHandler(async (req, res) => {
     const { pageNumber, pageSize, category_id, search, sortBy, sortOrder } = req.body;
 
-    const result = await subcategoryservice.getAllSubCategories({ pageNumber, pageSize, category_id, search, sortBy,sortOrder});
+    const result = await subcategoryservice.getAllSubCategories({ pageNumber, pageSize, category_id, search, sortBy, sortOrder });
 
     if (result.length == 0) {
       return resp.cResponse(req, res, resp.SUCCESS, con.category.NO_RECORD);
     }
-    return resp.cResponse(req, res, resp.SUCCESS, result);
+    return resp.cResponse(req, res, resp.SUCCESS,con.common.RECORD_SUCCESS, result);
   }),
 };
 
