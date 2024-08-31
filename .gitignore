@@ -10,6 +10,7 @@ config/test.json
 config/production.json
 logs
 log
+public/uploads/
 public/uploads/category/*
 public/uploads/profile/*
 public/uploads/subcategory/*
