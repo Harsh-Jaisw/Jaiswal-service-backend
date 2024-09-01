@@ -10,29 +10,31 @@ const userServices = {
     const db = makeDb(config);
     try {
       let valueArray = [];
-      let offset = Number((pageNumber - 1) * pageSize);
+      let offset = parseInt(pageNumber - 1) * parseInt(pageSize);
 
       // Base query
       let sql = `
-                SELECT 
-                    u.id, u.uid, u.firstName, u.lastName, u.email, u.mobileNumber, 
-                    u.profileImage, u.status, u.role, u.level, u.createdAt, u.updatedAt, 
-                    mr.name AS roleName 
-                FROM users AS u 
-                LEFT JOIN master_roles AS mr ON mr.id = u.role 
-                WHERE 1=1
-            `;
+        SELECT 
+          u.id, u.uid, u.firstName, u.lastName, u.email, u.mobileNumber, 
+          u.profileImage, u.status, u.role, u.level, u.createdAt, u.updatedAt, 
+          mr.name AS roleName 
+        FROM users AS u 
+        LEFT JOIN master_roles AS mr ON mr.id = u.role 
+        WHERE 1=1
+      `;
 
       // Add filters
       if (searchSortFilter) {
         if (searchSortFilter.role) {
-          sql += ' AND mr.name = ? ';
+          sql += ' AND LOWER(TRIM(mr.name)) = LOWER(TRIM(?)) ';
           valueArray.push(searchSortFilter.role);
         }
-        // if (searchSortFilter.status) {
-        //     sql += " AND u.status = ? ";
-        //     valueArray.push(searchSortFilter.status);
-        // }
+
+        if (searchSortFilter.status) {
+          sql += ' AND u.status = ? ';
+          valueArray.push(searchSortFilter.status);
+        }
+
         if (searchSortFilter.search) {
           sql += ` AND (u.firstName LIKE ? OR u.lastName LIKE ? OR u.email LIKE ? OR u.mobileNumber LIKE ?) `;
           const searchValue = `%${searchSortFilter.search}%`;
@@ -49,10 +51,11 @@ const userServices = {
 
       // Pagination
       if (pageNumber != null && pageSize != null) {
-        sql += ' LIMIT ?,?';
-        valueArray.push(offset, pageSize);
+        sql += ' LIMIT ?, ?';
+        valueArray.push(offset, parseInt(pageSize));
       }
 
+      // Log SQL query for debugging
       commonServices.loggerMessage(req, 'getUsers', sql, valueArray);
 
       // Execute main query
@@ -60,24 +63,25 @@ const userServices = {
 
       // Get total count
       let countSql = `
-                SELECT COUNT(*) AS total
-                FROM users AS u 
-                LEFT JOIN master_roles AS mr ON mr.id = u.role 
-                WHERE 1=1
-            `;
+        SELECT COUNT(*) AS total
+        FROM users AS u 
+        LEFT JOIN master_roles AS mr ON mr.id = u.role 
+        WHERE 1=1
+      `;
 
-      // Reuse valueArray but without LIMIT/OFFSET
       let countValues = valueArray.slice(0, valueArray.length - 2);
 
       if (searchSortFilter) {
         if (searchSortFilter.role) {
-          countSql += ' AND mr.name = ? ';
+          countSql += ' AND LOWER(TRIM(mr.name)) = LOWER(TRIM(?)) ';
           countValues.push(searchSortFilter.role);
         }
-        //if (searchSortFilter.status) {
-        //     countSql += " AND u.status = ? ";
-        //     countValues.push(searchSortFilter.status);
-        // }
+
+        if (searchSortFilter.status) {
+          countSql += ' AND u.status = ? ';
+          countValues.push(searchSortFilter.status);
+        }
+
         if (searchSortFilter.search) {
           countSql += ` AND (u.firstName LIKE ? OR u.lastName LIKE ? OR u.email LIKE ? OR u.mobileNumber LIKE ?) `;
           const searchValue = `%${searchSortFilter.search}%`;
@@ -100,7 +104,7 @@ const userServices = {
     } finally {
       await db.close();
     }
-  },
+  }
 };
 
 module.exports = userServices;
