@@ -126,31 +126,47 @@ const common = {
   }),
 
   getUsers: asyncHandler(async (req, res) => {
+    const body = req.body;
     const { userId } = req.token;
-    let result = await commonServices.readSingleData(req, tables.users, '*', {
-      id: userId,
-    });
 
+    // Check if the user has the right role
+    let result = await commonServices.readSingleData(req, tables.users, '*', { id: userId });
     if (result[0].role != 3) {
       return resp.cResponse(req, res, resp.BAD_REQUEST, con.middleware.AUTHORIZATION_FAILED_NO_PERMISSION);
     }
 
-    const users = await commonServices.readAllData(
-      req,
-      tables.users,
-      'id,uid,firstName,lastName,email,mobileNumber,profileImage,status,role,level,createdAt,updatedAt',
-      {},
-    );
-    if (users.length > 0) {
+    // Construct the searchSortFilter object
+    let searchSortFilter = {
+      role: body.role || '',
+      status: body.status || '',
+      search: body.search || '',
+      sortBy: body.sortBy || 'firstName',
+      sortOrder: body.sortOrder || 'asc'
+    };
+
+    // Fetch users with pagination
+    const pageNumber = body.pageNumber || 1;
+    const pageSize = body.pageSize || 10;
+
+    const usersData = await userServices.getUsers(req, pageNumber, pageSize, searchSortFilter);
+
+    if (usersData.users.length > 0) {
       return resp.cResponse(req, res, resp.SUCCESS, con.common.SUCCESS, {
-        records: users,
+        records: usersData.users,
+        total: usersData.total,
+        page: usersData.page,
+        limit: usersData.limit
       });
     } else {
       return resp.cResponse(req, res, resp.SUCCESS, con.common.NO_RECORD, {
         records: [],
+        total: 0,
+        page: pageNumber,
+        limit: pageSize
       });
     }
   }),
+
 };
 
 module.exports = common;

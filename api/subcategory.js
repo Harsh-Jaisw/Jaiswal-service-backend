@@ -264,7 +264,7 @@ const subcategory = {
     if (result.length == 0) {
       return resp.cResponse(req, res, resp.SUCCESS, con.category.NO_RECORD);
     }
-    return resp.cResponse(req, res, resp.SUCCESS,con.common.RECORD_SUCCESS, result);
+    return resp.cResponse(req, res, resp.SUCCESS, con.common.RECORD_SUCCESS, result);
   }),
 };
 
