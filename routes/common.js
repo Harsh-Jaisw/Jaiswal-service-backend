@@ -19,14 +19,19 @@ module.exports = (router) => {
       reqValidator,
       common.getSubCategory,
     ),
-    router.post('/getUsers', auth, validator(Joi, {
-      pageNumber: Joi.number().integer().min(1).required(),
-      pageSize: Joi.number().integer().min(1).required(),
-      role: Joi.string().valid('Partner', 'Admin', 'Member').optional().allow(''),
-      status: Joi.string().valid('Active', 'Inactive').optional().allow(''),
-      sortBy: Joi.string().valid('firstName', 'email', 'mobileNumber').default('firstName'),
-      sortOrder: Joi.string().valid('asc', 'desc').default('asc'),
-      search: Joi.string().allow('')
-    }), reqValidator, common.getUsers);
-
+    router.post(
+      '/getUsers',
+      auth,
+      validator(Joi, {
+        pageNumber: Joi.number().integer().min(1).required(),
+        pageSize: Joi.number().integer().min(1).required(),
+        role: Joi.string().valid('Partner', 'Admin', 'Member').optional().allow(''),
+        status: Joi.string().valid('Active', 'Inactive').optional().allow(''),
+        sortBy: Joi.string().valid('firstName', 'email', 'mobileNumber').default('firstName'),
+        sortOrder: Joi.string().valid('asc', 'desc').default('asc'),
+        search: Joi.string().allow(''),
+      }),
+      reqValidator,
+      common.getUsers,
+    );
 };
