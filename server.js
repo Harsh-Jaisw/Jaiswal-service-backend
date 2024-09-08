@@ -34,8 +34,8 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: '*',
-    methods: ['GET', 'POST']
-  }
+    methods: ['GET', 'POST'],
+  },
 });
 
 io.on('connection', (socket) => {
@@ -64,7 +64,7 @@ io.on('connection', (socket) => {
         return callback({
           success: false,
           message: 'Invalid coordinates data',
-          error: 'Invalid coordinates data'
+          error: 'Invalid coordinates data',
         });
       }
 
@@ -74,13 +74,13 @@ io.on('connection', (socket) => {
         callback({
           success: true,
           message: 'Address fetched successfully',
-          address: address
+          address: address,
         });
       } else {
         callback({
           success: false,
           message: 'Unable to fetch address',
-          error: 'No address found'
+          error: 'No address found',
         });
       }
     } catch (error) {
@@ -88,7 +88,7 @@ io.on('connection', (socket) => {
       callback({
         success: false,
         message: 'Error fetching address',
-        error: error.message
+        error: error.message,
       });
     }
   });

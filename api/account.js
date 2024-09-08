@@ -11,7 +11,6 @@ const app = require('config');
 const jwt = require('jsonwebtoken');
 const { sendFCMNotification } = require('../helpers/notification');
 
-
 const tables = {
   users: 'users',
   ud: 'users_devices',
@@ -40,7 +39,7 @@ const account = {
     await commonServices.dynamicUpdate(req, tables.users, updateData, {
       email: body.email,
     });
-    
+
     return resp.cResponse(req, res, resp.CREATED, con.account.CREATED);
   }),
 
@@ -75,11 +74,11 @@ const account = {
         };
         await helper.sendMail(OTPInfo);
         const tokenData = await commonServices.readSingleData(req, tables.ud, '*', {
-          user_id: loginResults[0].id
+          user_id: loginResults[0].id,
         });
 
-        console.log(tokenData[0].users_device_token)
-        
+        console.log(tokenData[0].users_device_token);
+
         await sendFCMNotification(tokenData[0].users_device_token, 'OTP', `Your OTP is : ${newOtp}`);
         return resp.cResponse(req, res, resp.SUCCESS, con.account.OTP_SENT);
       } else if (loginResults.length > 0 && loginResults[0].status === 'Active') {
