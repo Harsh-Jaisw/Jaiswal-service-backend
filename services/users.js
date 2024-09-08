@@ -104,7 +104,7 @@ const userServices = {
     } finally {
       await db.close();
     }
-  }
+  },
 };
 
 module.exports = userServices;

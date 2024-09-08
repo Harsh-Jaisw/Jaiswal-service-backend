@@ -9,6 +9,7 @@ const { constants } = require('fs/promises');
 const logger = require('../logger/index');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
+const { default: axios } = require('axios');
 const config = './config/default.json';
 const jwtConfig = require('config').get('jwtConfig');
 
@@ -126,6 +127,89 @@ const common = {
         return info;
       }
     });
+  },
+  calculateDistance: (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radius of the Earth in km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+  },
+
+  getAddressFromCoordinates: async (latitude, longitude) => {
+    console.log(`Fetching address for coordinates: ${latitude}, ${longitude}`);
+
+    try {
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyBREu0TuBV343q5TCsPaFQuEYVZbNRqM8E`,
+        {
+          params: {
+            lat: latitude,
+            lon: longitude,
+          },
+        },
+      );
+      console.log(response.data.results[0]);
+      // Ensure that response.data has the fields you expect
+      if (response.data && response.data.results && response.data.results[0]) {
+        const addressComponents = response.data.results[0].address_components;
+
+        const address = {
+          line1: '',
+          line2: '',
+          city: '',
+          state: '',
+          postalCode: '',
+          country: '',
+        };
+
+        addressComponents.forEach((component) => {
+          if (component.types.includes('street_number')) {
+            address.line1 = component.long_name;
+          }
+          if (component.types.includes('route')) {
+            address.line2 = component.long_name;
+          }
+          if (component.types.includes('locality')) {
+            address.city = component.long_name;
+          }
+          if (component.types.includes('administrative_area_level_1')) {
+            address.state = component.short_name; // or use long_name if you prefer full state names
+          }
+          if (component.types.includes('postal_code')) {
+            address.postalCode = component.long_name;
+          }
+          if (component.types.includes('country')) {
+            address.country = component.long_name;
+          }
+        });
+        console.log(address);
+        return address;
+      } else {
+        console.warn('Unexpected response format:', response.data);
+        return {
+          line1: '',
+          line2: '',
+          city: '',
+          state: '',
+          postalCode: '',
+          country: '',
+        };
+      }
+    } catch (error) {
+      console.error('Error in reverse geocoding:', error.message);
+      return {
+        line1: '',
+        line2: '',
+        city: '',
+        state: '',
+        postalCode: '',
+        country: '',
+      };
+    }
   },
 };
 

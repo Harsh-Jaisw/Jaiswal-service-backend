@@ -141,7 +141,7 @@ const common = {
       status: body.status || '',
       search: body.search || '',
       sortBy: body.sortBy || 'firstName',
-      sortOrder: body.sortOrder || 'asc'
+      sortOrder: body.sortOrder || 'asc',
     };
 
     // Fetch users with pagination
@@ -155,18 +155,17 @@ const common = {
         records: usersData.users,
         total: usersData.total,
         page: usersData.page,
-        limit: usersData.limit
+        limit: usersData.limit,
       });
     } else {
       return resp.cResponse(req, res, resp.SUCCESS, con.common.NO_RECORD, {
         records: [],
         total: 0,
         page: pageNumber,
-        limit: pageSize
+        limit: pageSize,
       });
     }
   }),
-
 };
 
 module.exports = common;
